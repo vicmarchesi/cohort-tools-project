@@ -10,6 +10,7 @@ const Students = require('./models/Students.model');
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
 // ...
+const { notFoundHandler, errorHandler } = require("./middleware/error-handling");
 
 const cohorts = require("./cohorts.json");
 const students = require("./students.json")
@@ -64,8 +65,7 @@ app.get("/cohorts", (req, res) => {
       res.json(cohorts);
     })
     .catch((error) => {
-      console.error("Error while getting cohorts ->", error);
-      res.status(500).json({ error: "Failed to get cohorts" });
+      next(error);
     });
 });
 
@@ -77,11 +77,7 @@ app.get("/cohorts/:cohortId", async (req, res) => {
     }
     res.json(cohort);
   } catch (error) {
-    console.error('Error getting cohort:', error); 
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      return res.status(400).json({ error: 'Invalid cohort ID format' });
-    }
-    res.status(500).json({ error: 'failed to get cohort' }); 
+    next(error);
   }
 });
 
@@ -90,8 +86,7 @@ app.post('/cohorts', async (req, res) => {
     const newCohort = await Cohort.create(req.body);
     res.status(201).json(newCohort);
   } catch (error) {
-    console.error('Error creating cohort:', error);
-    res.status(500).json({ error: 'Failed to create cohort' });
+    next(error);
   }
 });
 
@@ -103,11 +98,7 @@ app.put('/cohorts/:cohortId', async (req, res) => {
     }
     res.json(updatedCohort);
   } catch (error) {
-    console.error('Error updating cohort:', error);
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      return res.status(400).json({ error: 'Invalid cohort ID format' });
-    }
-    res.status(500).json({ error: 'Failed to update cohort' });
+    next(error);
   }
 });
 
@@ -119,11 +110,7 @@ app.delete('/cohorts/:cohortId', async (req, res) => {
     }
     res.status(204).send(); 
   } catch (error) {
-    console.error('Error deleting cohort:', error);
-    if (error.name === 'CastError' && error.kind === 'ObjectId') {
-      return res.status(400).json({ error: 'Invalid cohort ID format' });
-    }
-    res.status(500).json({ error: 'Failed to delete cohort' });
+    next(error);
   }
 });
 
@@ -132,8 +119,7 @@ app.get("/students", async (req, res) => {
     const students = await Students.find().populate('cohort')
     res.json(students);
   } catch (error) {
-      console.error("Error while retrieving students ->", error);
-      res.status(500).json({ error: "Failed to retrieve students" });
+    next(error);
   }
 });
 
@@ -142,7 +128,7 @@ app.get("/students/cohort/:cohortId", async (req, res) => {
     const students = await Students.find({ cohort: req.params.cohortId }).populate('cohort');
     res.json(students);
   } catch (error) {
-    res.status(500).json({ error: "Error retrieving students for this cohort." });
+    next(error);
   }
 });
 
@@ -152,7 +138,7 @@ app.get("/students/:studentId" , async (req, res) => {
     if (!student) return res.status(404).json({ message: "Student not found." });
     res.json(student);
   } catch (error) {
-    res.status(500).json({ error: "Error retrieving student." });
+    next(error);
   }
 });
 
@@ -161,8 +147,7 @@ app.post("/students", async (req, res) => {
       const newStudent = await Students.create(req.body);
       res.status(201).json(newStudent);
     } catch (error) {
-      console.error("Error creating student:", error);
-      res.status(500).json({ error: "Error creating student." });
+      next(error);
     }
   });
 
@@ -172,10 +157,12 @@ app.delete("/students/:studentId", async (req, res) => {
             
     res.json({ message: "Student deleted successfully." });
   } catch (error) {
-    res.status(500).json({ error: "Error deleting student." });
+    next(error);
   }
 });
 
+app.use(notFoundHandler); 
+app.use(errorHandler); 
 
 // START SERVER
 app.listen(process.env.PORT, () => {
