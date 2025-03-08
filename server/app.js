@@ -57,7 +57,7 @@ app.get("/docs", (req, res) => {
 //   res.json(cohorts);
 // });
 
-app.get("/cohorts", (req, res) => {
+app.get("/api/cohorts", (req, res) => {
   Cohort.find({})
     .then((cohorts) => {
       console.log("Retrieved cohort ->", cohorts);
@@ -69,7 +69,7 @@ app.get("/cohorts", (req, res) => {
     });
 });
 
-app.get("/cohorts/:cohortId", async (req, res) => {
+app.get("/api/cohorts/:cohortId", async (req, res) => {
   try {
     const cohort = await Cohort.findById(req.params.cohortId); 
     if (!cohort) {
@@ -85,7 +85,7 @@ app.get("/cohorts/:cohortId", async (req, res) => {
   }
 });
 
-app.post('/cohorts', async (req, res) => {
+app.post('/api/cohorts', async (req, res) => {
   try {
     const newCohort = await Cohort.create(req.body);
     res.status(201).json(newCohort);
@@ -95,7 +95,7 @@ app.post('/cohorts', async (req, res) => {
   }
 });
 
-app.put('/cohorts/:cohortId', async (req, res) => {
+app.put('/api/cohorts/:cohortId', async (req, res) => {
   try {
     const updatedCohort = await Cohort.findByIdAndUpdate(req.params.cohortId, req.body, { new: true })
     if (!updatedCohort) {
@@ -111,7 +111,7 @@ app.put('/cohorts/:cohortId', async (req, res) => {
   }
 });
 
-app.delete('/cohorts/:cohortId', async (req, res) => {
+app.delete('/api/cohorts/:cohortId', async (req, res) => {
   try {
     const deletedCohort = await Cohort.findByIdAndDelete(req.params.cohortId);
     if (!deletedCohort) {
@@ -127,7 +127,7 @@ app.delete('/cohorts/:cohortId', async (req, res) => {
   }
 });
 
-app.get("/students", async (req, res) => {
+app.get("/api/students", async (req, res) => {
   try {
     const students = await Students.find().populate('cohort')
     res.json(students);
@@ -137,7 +137,7 @@ app.get("/students", async (req, res) => {
   }
 });
 
-app.get("/students/cohort/:cohortId", async (req, res) => {
+app.get("/api/students/cohort/:cohortId", async (req, res) => {
   try {
     const students = await Students.find({ cohort: req.params.cohortId }).populate('cohort');
     res.json(students);
@@ -146,7 +146,7 @@ app.get("/students/cohort/:cohortId", async (req, res) => {
   }
 });
 
-app.get("/students/:studentId" , async (req, res) => {
+app.get("/api/students/:studentId" , async (req, res) => {
   try{
     const student = await Students.findById(req.params.studentId).populate('cohort');
     if (!student) return res.status(404).json({ message: "Student not found." });
@@ -156,7 +156,7 @@ app.get("/students/:studentId" , async (req, res) => {
   }
 });
 
-app.post("/students", async (req, res) => {
+app.post("/api/students", async (req, res) => {
     try {  
       const newStudent = await Students.create(req.body);
       res.status(201).json(newStudent);
@@ -166,7 +166,7 @@ app.post("/students", async (req, res) => {
     }
   });
 
-app.delete("/students/:studentId", async (req, res) => {
+app.delete("/api/students/:studentId", async (req, res) => {
   try {
     const student = await Students.findByIdAndDelete(req.params.studentId);
             
