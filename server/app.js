@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const { isAuthenticated } = require("./middleware/jwt.middleware");
 
 
 const Cohort = require('./models/Cohort.model');
@@ -160,6 +161,9 @@ app.delete("/students/:studentId", async (req, res) => {
     next(error);
   }
 });
+
+const authRouter = require("./routes/auth.routes");
+app.use("/auth", authRouter);
 
 app.use(notFoundHandler); 
 app.use(errorHandler); 
