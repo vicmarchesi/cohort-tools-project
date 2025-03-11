@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const { isAuthenticated } = require("./middleware/jwt.middleware");
 
 // MODELS
 const Cohort = require('./models/Cohort.model');
@@ -161,6 +162,11 @@ app.delete("/api/students/:studentId", async (req, res) => {
   }
 });
 
+const authRouter = require("./routes/auth.routes");
+app.use("/auth", authRouter);
+
+app.use(notFoundHandler); 
+app.use(errorHandler); 
 
 const userRoute = require("./routes/users.routes.js");
 app.use('/api/users', userRoute);
