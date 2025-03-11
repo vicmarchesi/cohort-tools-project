@@ -13,7 +13,7 @@ const isAuthenticated = (req, res, next) => {
 
     // Move to the next middleware or route
     next();
-    console.log(req.headers.authorization)
+    
   } catch (error) {
     // Handle invalid or missing tokens
     res.status(401).json({ message: "Token not provided or invalid" });

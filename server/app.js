@@ -162,12 +162,6 @@ app.delete("/api/students/:studentId", async (req, res) => {
   }
 });
 
-const authRouter = require("./routes/auth.routes");
-app.use("/auth", authRouter);
-
-app.use(notFoundHandler); 
-app.use(errorHandler); 
-
 const userRoute = require("./routes/users.routes.js");
 app.use('/api/users', userRoute);
 
